@@ -14,11 +14,18 @@ for i in range(7):
     for item in response['results']:
         d = datetime.fromtimestamp(int(item['time']) / 1000).weekday()
         if d == i:
-            output.write('<div><p>Time: ' + str(datetime.fromtimestamp(int(item['time']) / 1000)) + '</p>')
-            output.write('<p>Name of Occasion: ' + str(item['name'] + '</p>'))
-            output.write('<p>Organizator: ' + str((item['group'])['name'])+'</p>')
-            output.write('<p>Description: ')
-            output.write('<p>' + str(item['description']) + '</p>')
+            try:
+                output.write('<div><p>Time: ' + str(datetime.fromtimestamp(int(item['time']) / 1000)) + '</p>')
+            except KeyError:pass
+            try:
+                output.write('<p>Name: ' + str(item['name'] + '</p>'))
+            except KeyError:pass
+            try:
+                output.write('<p>Organizer: ' + str((item['group'])['name'])+'</p>')
+            except KeyError:pass
+            try:
+                output.write('<p>Description: ' + str(item['description']) + '</p>')
+            except KeyError:pass
             try:
                 output.write("<p>Phone: " + str((item['venue'])['phone']) + '</p>')
             except KeyError:pass
@@ -30,9 +37,6 @@ for i in range(7):
             except KeyError:pass
             try:
                 output.write('<p>Address: ' + str((item['venue'])['address_1']) + '</p>')
-            except KeyError:pass
-            try:
-                output.write('<p><b>Address2: </b>' + str((item['venue'])['address_2']) + '</p>')
             except KeyError:pass
             output.write('</div>')
 output.write('</body></html>')
