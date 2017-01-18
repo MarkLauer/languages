@@ -1,26 +1,37 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Token struct {
 	data      string
 	recipient int
 }
 
-func thread(i int, token Token, ch chan string) {
-	if token.recipient == i {
-		ch <- "arrived"
+func initial(ch chan Token, token Token) {
+	fmt.Println("initial thread")
+	ch <- token
+}
+
+func thread(ch chan Token, num int) {
+	fmt.Println("thread", num) 
+	token := <-ch
+	if token.recipient == num {
+		fmt.Println(token.data, "received")
 	} else {
-		ch <- "not arrived"
+		ch <- token
 	}
 }
 
 func main() {
-	var N int = 20
-	token := Token{"data", N}
-	ch := make(chan string)
-	for i := 1; i <= N; i++ {
-		go thread(i, token, ch)
+	n := 20
+	token := Token{"data", n}
+	ch := make(chan Token)
+	go initial(ch, token)
+	for i := 1; i <= n; i++ {
+		go thread(ch, i)
 	}
-	fmt.Println(<-ch)
+	time.Sleep(time.Second)
 }
